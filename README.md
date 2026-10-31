@@ -6,7 +6,7 @@
 
 [下载最新版](https://github.com/ai1274/tavo-card-studio/releases/latest) · [全部版本](https://github.com/ai1274/tavo-card-studio/releases) · [反馈问题](https://github.com/ai1274/tavo-card-studio/issues)
 
-> 当前公开版本：**0.3.6**。这是独立创作应用，无需安装 Tavo 插件即可编辑和导出文件。使用 AI 功能需要自行配置可用的模型接口，费用及模型能力以所选服务为准。
+> 当前公开版本：**0.4.4**。这是独立创作应用，无需安装 Tavo 插件即可编辑和导出文件。使用 AI 功能需要自行配置可用的模型接口，费用及模型能力以所选服务为准。
 
 ## 软件简介
 
@@ -35,14 +35,14 @@ Tavo Card Studio 适合从零制作角色卡、完善已有角色卡，以及单
 
 ### 选择对应版本
 
-以下链接均为 **0.3.6**；后续版本请前往[最新版发布页](https://github.com/ai1274/tavo-card-studio/releases/latest)。
+以下链接均为 **0.4.4**；后续版本请前往[最新版发布页](https://github.com/ai1274/tavo-card-studio/releases/latest)。
 
 | 设备 | 下载文件 |
 | --- | --- |
-| Windows x64 | [Tavo-Card-Studio-Portable-0.3.6.exe](https://github.com/ai1274/tavo-card-studio/releases/download/v0.3.6/Tavo-Card-Studio-Portable-0.3.6.exe) |
-| Mac Apple Silicon（M 系列） | [Tavo-Card-Studio-Mac-0.3.6-arm64.zip](https://github.com/ai1274/tavo-card-studio/releases/download/v0.3.6/Tavo-Card-Studio-Mac-0.3.6-arm64.zip) |
-| Mac Intel | [Tavo-Card-Studio-Mac-0.3.6-x64.zip](https://github.com/ai1274/tavo-card-studio/releases/download/v0.3.6/Tavo-Card-Studio-Mac-0.3.6-x64.zip) |
-| Android | [Tavo-Card-Studio-Android-0.3.6-debug.apk](https://github.com/ai1274/tavo-card-studio/releases/download/v0.3.6/Tavo-Card-Studio-Android-0.3.6-debug.apk) |
+| Windows x64 | [Tavo-Card-Studio-Portable-0.4.4.exe](https://github.com/ai1274/tavo-card-studio/releases/download/v0.4.4/Tavo-Card-Studio-Portable-0.4.4.exe) |
+| Mac Apple Silicon（M 系列） | [Tavo-Card-Studio-Mac-0.4.4-arm64.zip](https://github.com/ai1274/tavo-card-studio/releases/download/v0.4.4/Tavo-Card-Studio-Mac-0.4.4-arm64.zip) |
+| Mac Intel | [Tavo-Card-Studio-Mac-0.4.4-x64.zip](https://github.com/ai1274/tavo-card-studio/releases/download/v0.4.4/Tavo-Card-Studio-Mac-0.4.4-x64.zip) |
+| Android | [Tavo-Card-Studio-Android-0.4.4-debug.apk](https://github.com/ai1274/tavo-card-studio/releases/download/v0.4.4/Tavo-Card-Studio-Android-0.4.4-debug.apk) |
 
 ### Windows
 
@@ -78,6 +78,29 @@ Tavo Card Studio 适合从零制作角色卡、完善已有角色卡，以及单
 7. 返回角色卡助手、文件助手或对话窗口，选择刚保存的配置开始使用。
 
 连接测试与拉取模型检查的是模型目录接口，不代表生成、视觉或长文本能力已经验证。界面中的 Amazon Bedrock 目前仅支持保存配置及手填模型 ID，尚未接入 AWS 认证与生成，请使用上述已支持的生成协议。
+
+## 联网搜索与 Tavo MCP
+
+工具默认关闭；需要时先在 **API 配置** 中保存设置，再在角色卡 AI 助手或独立对话窗口勾选对应工具。
+
+### 配置搜索
+
+- 默认使用当前模型供应商的原生搜索能力；需服务支持 OpenAI Responses、Anthropic 或 Google Gemini 对应搜索工具。OpenAI Compatible 没有通用原生搜索，不能仅凭兼容接口名称判断可用。
+- 也可在 **搜索 API** 配置中填写独立搜索服务的接口、密钥和模型。该配置使用所选模型协议的搜索能力，并非可接入任意搜索引擎的通用 REST 模板。
+- 搜索只发送本轮用户输入的原话，返回内容作为参考。未返回可追溯 HTTP(S) 来源时，界面会说明尚未证实联网搜索。
+
+### 连接 Tavo MCP
+
+1. 在 Tavo 中开启 MCP Server，获取当前服务地址和访问令牌。
+2. 在 **API 配置 → Tavo MCP** 填写 MCP 地址（例如本机服务的 `http://127.0.0.1:7347/mcp`）和 MCP Token（只填令牌本身，不加 `Bearer ` 前缀），保存后测试连接。不要在反馈或公开截图中暴露令牌。
+3. 在助手中开启 Tavo MCP，并明确说明要读取的角色或世界书。应用可先搜索再读取目标；0.4.4 修复了 Tavo MCP Server 1.7.0 四个精确角色/世界书 search/get 接口缺少只读标注时无法读取的问题。
+4. 核对 AI 给出的本地修改建议，手动应用并保存、导出。应用不自动回写 Tavo；如需让 Tavo 使用修改结果，请在 Tavo 中导入或手动更新。
+
+MCP 单次内容响应上限为 4 MiB，超限会明确报错；默认完整读取角色或世界书正文，明确指定字段时才只取相关字段并列明省略项。每轮最多两次只读内容调用，读取 ID 必须来自本轮实际搜索结果。工具、资料和附件返回的文本不是执行指令。
+
+Windows/macOS 的 `127.0.0.1` 指运行 Studio 的电脑；Android 的同一地址指手机自身。跨设备连接应使用实际可达的服务地址及安全的访问方式。连接成功只证明握手和工具发现，不证明模型已选用工具或已获得内容。
+
+开启工具可能增加模型调用、联网流量和费用；缓存命中与计费由服务方决定。密钥随本机设置加密保存，桌面与手机的设置不自动同步。
 
 ## 使用流程一：制作一张角色卡
 
@@ -149,7 +172,7 @@ PNG 导出包含角色卡数据，截图或经平台压缩处理的图片可能�
 
 1. 进入 **对话窗口**，选择已保存的 API 配置并开始会话。
 2. 输入问题或创作要求，按需添加文本、PDF、Word 或图片附件。
-3. 查看流式回复；需要时停止、重新生成，或在出现续写入口时继续生成。
+3. 查看流式回复；需要时停止或重新生成。达到模型输出额度而截断时，应用会自动接续，保留已有内容；失败或停止时仍保留已生成文本。
 4. 复制回复，或通过下载操作保存为 Markdown、TXT、Word、PDF；模型提供文件时，可在文件条目中保存。
 5. 从会话历史继续之前的讨论。
 
@@ -159,7 +182,7 @@ PDF/Word 附件在本地提取文字；扫描版 PDF 不保证 OCR。图片理�
 
 ## 内置知识与助手使用建议
 
-- 内置资料包含 Tavo 官方技术文档及 MCP 1.7.0 的公开文档、规则与格式定义；0.3.6 沿用 567 个技术知识单元。
+- 内置资料包含 Tavo 官方技术文档及 MCP 1.7.0 的公开文档、规则与格式定义；0.4.4 沿用 567 个技术知识单元。
 - 角色卡助手结合题材、本页与必要跨页指导；四类文件助手使用各自的技术和美化参考。
 - 提问时说明对象和目标，例如“世界书关键词触发”“正则替换文本的标签页样式”“主题字体与背景”，比单独说“优化一下”更容易检索到相关资料。
 - 内置资料随软件版本更新，不是实时在线查询。使用这些资料不需要连接作者电脑或本地 MCP 服务。
@@ -199,11 +222,14 @@ PDF/Word 附件在本地提取文字；扫描版 PDF 不保证 OCR。图片理�
 
 从[最新版发布页](https://github.com/ai1274/tavo-card-studio/releases/latest)下载对应平台文件。更新前先导出重要内容；不要为了更新直接卸载 Android 应用，以免丢失应用内数据。若系统拒绝安装，先核对签名与兼容性提示。
 
-## 0.3.6 更新要点
+## 0.4.4 更新要点
 
-- 完善 12 个题材、9 个助手页面的当前页与跨页指导，统一增量修改输出要求。
-- Android 新增导航区 AI 助手侧面板，完善会话保持、焦点、软键盘和返回键交互。
-- 延续内置技术知识检索、四类文件助手的附件与增量建议，以及大图片嵌入保存修复。
+- API 配置新增 Tavo MCP 与搜索 API；角色卡 AI 助手、独立对话支持按需开启工具，默认关闭。
+- 修复 Tavo MCP Server 1.7.0 角色/世界书搜索与读取兼容问题，完整正文不再静默截断，指定字段时显示省略项。
+- 读取结果用于本地待审建议，保留手动应用与导出流程，不自动修改 Tavo 远端内容。
+- 每轮发送保存的前置词、检索参考、用户需求与附件、后置词；额度截断自动接续保留本轮规则，可能增加请求和费用。
+- 改善历史参考快照和请求前缀布局；缓存实际命中率与成本没有经过真实供应商测量，不作提升承诺。
+- 已完成 Windows 实际便携包与 Android 专用模拟器验证；Mac 双架构通过静态资源与包检查，尚未实机验证。真实供应商联网搜索与模型自主选择工具仍未验证。
 
 ## 反馈与交流
 
